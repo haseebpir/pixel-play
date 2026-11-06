@@ -2090,6 +2090,21 @@
       box-shadow: 0 0 0 var(--pp-shadow);
     }
 
+    /* One hover wash and one mechanical press for every key on the console —
+       deck keys and centre keys alike — so the whole surface answers the
+       pointer and the press identically. */
+    @media (hover: hover) {
+      .media-button:hover,
+      .video-controls-center-button:hover {
+        background-color: color-mix(in srgb, var(--pp-raised), var(--media-foreground) 10%) !important;
+      }
+    }
+
+    .video-controls-center-button:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0 0 0 var(--pp-shadow);
+    }
+
     .media-button:focus-visible {
       background-color: var(--pp-raised);
       outline: 3px solid var(--media-accent);
@@ -2187,9 +2202,28 @@
 
     /* ---- Bottom console deck --------------------------------------------- */
 
+    /* Slimmer deck on the 4/8/12/16 rhythm: block padding drops from 12px to
+       8px and the seek row sits 4px above the key row. The 24px seek hit area
+       and the 44px keys are untouched. */
     .video-controls-bottom {
       border-top: 3px solid var(--media-accent);
       box-shadow: 0 -4px 0 var(--pp-shadow);
+      padding-block: calc(var(--media-spacing) * 2);
+      gap: calc(var(--media-spacing) * 1);
+    }
+
+    /* Desktop-size players: the deck leaves the edges and floats as a centred
+       cabinet panel at roughly half its old width — the same gold frame and
+       hard shadow as the start button. A px floor keeps every key on the row
+       at medium widths; below 40rem the deck stays full width. */
+    @container media-root (width >= 40rem) {
+      .video-controls-bottom {
+        margin-inline: auto;
+        max-width: max(56%, 28rem);
+        bottom: calc(var(--media-spacing) * 3);
+        border: 3px solid var(--media-accent);
+        box-shadow: 6px 6px 0 var(--pp-shadow);
+      }
     }
 
     /* The deck (and top bar) stay visible while keyboard focus is inside the
@@ -2207,6 +2241,16 @@
       }
     }
 
+    /* ---- Chrome motion: one calm fade --------------------------------------- */
+
+    /* Auto-hide is a 250ms opacity fade, never a layout shift: the bars are
+       absolutely positioned, so hiding them cannot move the picture. */
+    .video-controls-top,
+    .video-controls-bottom,
+    .video-controls-center {
+      transition: opacity 250ms ease;
+    }
+
     /* ---- Timeline: segmented XP bar over the real slider ------------------ */
 
     .media-time-slider {
@@ -2221,6 +2265,24 @@
 
     .media-time-slider-track:before {
       background-color: var(--pp-track);
+    }
+
+    /* The XP bar fattens one step (12px → 16px) while it is hovered or holds
+       keyboard focus, so it reads as grabbable; the segment cuts stay on the
+       same even 10px pitch at either height, and the thumb keeps its own
+       focus ring and drag growth. */
+    .media-time-slider-track {
+      transition: height 150ms ease;
+    }
+
+    @media (hover: hover) {
+      .media-time-slider:hover .media-time-slider-track {
+        height: calc(var(--media-spacing) * 4);
+      }
+    }
+
+    .media-time-slider:focus-within .media-time-slider-track {
+      height: calc(var(--media-spacing) * 4);
     }
 
     /* Dark 2px gaps every 10px cut the continuous fill into XP blocks. */
@@ -2423,6 +2485,10 @@
       border: 2px solid var(--pp-edge);
       box-shadow: 4px 4px 0 var(--pp-shadow);
       font-weight: 700;
+      /* The base chip padding (2px block) sits off the spacing rhythm; bring
+         it onto the same 4/8 steps as the menus. */
+      padding-block: calc(var(--media-spacing) * 1);
+      padding-inline: calc(var(--media-spacing) * 2);
     }
 
     .media-tooltip-shortcut {
@@ -2658,7 +2724,8 @@
         animation: none !important;
       }
 
-      .media-button:active {
+      .media-button:active,
+      .video-controls-center-button:active {
         transform: none;
       }
     }
