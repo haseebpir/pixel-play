@@ -1964,9 +1964,12 @@
 /*
  * Pixel Play — retro arcade console skin, layered over the Scaffold base above.
  * Same layer and scope as the base rules, later in the file, so these win.
- * Discipline: 4px grid, zero rounded corners, flat color, hard offset shadows,
- * no blur and no backdrop filters. Nothing readable ever sits directly on the
- * video: the deck and every chip are near-opaque cabinet panels.
+ * Discipline: 4px grid, zero rounded corners, pixel type and icons. The 2026
+ * HUD finish pass keeps the arcade silhouette but refinishes every surface:
+ * 2px frames, translucent layered shadows instead of flat black offsets, a
+ * subtle vertical gradient over each panel, and ghost keys on the top bar.
+ * Nothing readable ever sits directly on the video: the deck and every chip
+ * stay near-opaque.
  */
 @layer components {
   @scope (.media-skin[data-theme="scaffold"][data-preset="video"]) {
@@ -1980,6 +1983,16 @@
       --pp-edge: #3d3d5c;
       --pp-shadow: #08080f;
       --pp-track: #08080f;
+      --pp-shadow-soft: rgb(4 4 10 / 0.55);
+      --pp-ambient: rgb(4 4 10 / 0.38);
+      --pp-panel-gradient: linear-gradient(
+        180deg,
+        rgb(38 38 64 / 0.97),
+        rgb(29 29 48 / 0.97) 46%,
+        rgb(19 19 36 / 0.97)
+      );
+      --pp-ghost-bg: rgb(15 15 26 / 0.62);
+      --pp-ghost-edge: rgb(245 245 250 / 0.3);
       --pp-display: "Press Start 2P", ui-monospace, monospace;
 
       --media-font-family: "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -2022,6 +2035,16 @@
         --pp-edge: #8e8ea8;
         --pp-shadow: #b9b9cc;
         --pp-track: #c9c9d9;
+        --pp-shadow-soft: rgb(110 110 150 / 0.45);
+        --pp-ambient: rgb(90 90 130 / 0.26);
+        --pp-panel-gradient: linear-gradient(
+          180deg,
+          rgb(255 255 255 / 0.98),
+          rgb(245 245 250 / 0.98) 52%,
+          rgb(231 231 243 / 0.98)
+        );
+        --pp-ghost-bg: rgb(245 245 250 / 0.66);
+        --pp-ghost-edge: rgb(15 15 26 / 0.28);
         --pp-green: #177a3a;
         --pp-magenta: #d81b4f;
         --pp-cyan: #0077a8;
@@ -2041,6 +2064,16 @@
       --pp-edge: #8e8ea8;
       --pp-shadow: #b9b9cc;
       --pp-track: #c9c9d9;
+      --pp-shadow-soft: rgb(110 110 150 / 0.45);
+      --pp-ambient: rgb(90 90 130 / 0.26);
+      --pp-panel-gradient: linear-gradient(
+        180deg,
+        rgb(255 255 255 / 0.98),
+        rgb(245 245 250 / 0.98) 52%,
+        rgb(231 231 243 / 0.98)
+      );
+      --pp-ghost-bg: rgb(245 245 250 / 0.66);
+      --pp-ghost-edge: rgb(15 15 26 / 0.28);
       --pp-green: #177a3a;
       --pp-magenta: #d81b4f;
       --pp-cyan: #0077a8;
@@ -2061,6 +2094,16 @@
       --pp-edge: #3d3d5c;
       --pp-shadow: #08080f;
       --pp-track: #08080f;
+      --pp-shadow-soft: rgb(4 4 10 / 0.55);
+      --pp-ambient: rgb(4 4 10 / 0.38);
+      --pp-panel-gradient: linear-gradient(
+        180deg,
+        rgb(38 38 64 / 0.97),
+        rgb(29 29 48 / 0.97) 46%,
+        rgb(19 19 36 / 0.97)
+      );
+      --pp-ghost-bg: rgb(15 15 26 / 0.62);
+      --pp-ghost-edge: rgb(245 245 250 / 0.3);
       --pp-green: #35d461;
       --pp-magenta: #ff3e6c;
       --pp-cyan: #33ccff;
@@ -2073,7 +2116,7 @@
       height: calc(var(--media-spacing) * 11);
       background-color: var(--pp-raised);
       border: 2px solid var(--pp-edge);
-      box-shadow: 4px 4px 0 var(--pp-shadow);
+      box-shadow: 3px 3px 0 var(--pp-shadow-soft);
       color: var(--media-foreground);
     }
 
@@ -2130,8 +2173,9 @@
       line-height: 1.6;
       letter-spacing: 0.04em;
       background-color: var(--media-background);
+      background-image: var(--pp-panel-gradient);
       border: 2px solid var(--media-accent);
-      box-shadow: 4px 4px 0 var(--pp-shadow);
+      box-shadow: 3px 3px 0 var(--pp-shadow-soft);
       color: var(--media-accent);
       padding: calc(var(--media-spacing) * 1.5) calc(var(--media-spacing) * 2);
     }
@@ -2141,17 +2185,42 @@
       background-image: none;
     }
 
+    /* Top-bar keys go ghost: translucent fills with a hairline of light, so
+       the feature keys float over the footage instead of sitting in solid
+       boxes. The shared hover wash still takes over under the pointer, and
+       focus/expanded states reclaim the solid cabinet surface. */
+    .video-controls-top .media-button {
+      background-color: var(--pp-ghost-bg);
+      border-color: var(--pp-ghost-edge);
+      box-shadow: 2px 2px 0 var(--pp-shadow-soft);
+      backdrop-filter: blur(6px);
+    }
+
+    .video-controls-top .media-button:focus-visible {
+      background-color: var(--pp-raised);
+    }
+
+    @media (hover: hover) {
+      .video-controls-top .media-button:hover {
+        border-color: var(--media-accent);
+      }
+    }
+
+    .video-controls-top .media-button[aria-expanded="true"] {
+      border-color: var(--media-accent);
+    }
+
     /* ---- Center: PRESS START -------------------------------------------- */
 
     .video-controls-center-button {
       background-color: var(--pp-raised) !important;
       border: 2px solid var(--pp-edge);
-      box-shadow: 4px 4px 0 var(--pp-shadow);
+      box-shadow: 3px 3px 0 var(--pp-shadow-soft);
     }
 
     .video-controls-center-seek {
-      width: calc(var(--media-spacing) * 12) !important;
-      height: calc(var(--media-spacing) * 12) !important;
+      width: calc(var(--media-spacing) * 11) !important;
+      height: calc(var(--media-spacing) * 11) !important;
     }
 
     .media-seek-button-label {
@@ -2163,16 +2232,20 @@
       width: calc(var(--media-spacing) * 16) !important;
       height: calc(var(--media-spacing) * 16) !important;
       background-color: var(--media-background) !important;
-      border: 3px solid var(--media-accent);
-      box-shadow: 6px 6px 0 var(--pp-shadow);
+      background-image: var(--pp-panel-gradient);
+      border: 2px solid var(--media-accent);
+      box-shadow:
+        5px 5px 0 var(--pp-shadow-soft),
+        0 16px 32px var(--pp-ambient);
     }
 
     .video-controls-center-play-icon {
       color: var(--media-accent);
     }
 
-    /* The signature caption: a static gold tag under the big play button.
-       It never blinks (photosensitivity); the wording follows the state. */
+    /* The signature caption: a small, wide-tracked gold tag under the big
+       play button. It never blinks (photosensitivity); the wording follows
+       the state. */
     .video-controls-center-play:not([data-started])::after,
     .video-controls-center-play[data-paused]::after,
     .video-controls-center-play[data-ended]::after {
@@ -2181,14 +2254,14 @@
       left: 50%;
       transform: translateX(-50%);
       font-family: var(--pp-display);
-      font-size: calc(var(--media-spacing) * 2.75);
-      letter-spacing: 0.05em;
+      font-size: calc(var(--media-spacing) * 2.25);
+      letter-spacing: 0.16em;
       white-space: nowrap;
       background-color: var(--media-accent);
       color: var(--media-accent-foreground);
-      border: 2px solid var(--pp-shadow);
-      box-shadow: 4px 4px 0 var(--pp-shadow);
-      padding: var(--media-spacing) calc(var(--media-spacing) * 2);
+      border: 1px solid var(--pp-shadow);
+      box-shadow: 3px 3px 0 var(--pp-shadow-soft);
+      padding: calc(var(--media-spacing) * 0.75) calc(var(--media-spacing) * 2);
     }
 
     .video-controls-center-play:not([data-started])::after,
@@ -2202,27 +2275,30 @@
 
     /* ---- Bottom console deck --------------------------------------------- */
 
-    /* Slimmer deck on the 4/8/12/16 rhythm: block padding drops from 12px to
-       8px and the seek row sits 4px above the key row. The 24px seek hit area
-       and the 44px keys are untouched. */
+    /* Slim deck on the 4/8/12/16 rhythm: 8px block padding and an 8px breath
+       between the seek row and the key row. The 24px seek hit area and the
+       44px keys are untouched. The panel wears the gradient HUD finish. */
     .video-controls-bottom {
-      border-top: 3px solid var(--media-accent);
-      box-shadow: 0 -4px 0 var(--pp-shadow);
+      background-image: var(--pp-panel-gradient);
+      border-top: 2px solid var(--media-accent);
+      box-shadow: 0 -3px 0 var(--pp-shadow-soft);
       padding-block: calc(var(--media-spacing) * 2);
-      gap: calc(var(--media-spacing) * 1);
+      gap: calc(var(--media-spacing) * 2);
     }
 
     /* Desktop-size players: the deck leaves the edges and floats as a centred
-       cabinet panel at roughly half its old width — the same gold frame and
-       hard shadow as the start button. A px floor keeps every key on the row
-       at medium widths; below 40rem the deck stays full width. */
+       panel at roughly half its old width — a 2px gold frame with the
+       softened layered shadow. A px floor keeps every key on the row at
+       medium widths; below 40rem the deck stays full width. */
     @container media-root (width >= 40rem) {
       .video-controls-bottom {
         margin-inline: auto;
         max-width: max(56%, 28rem);
         bottom: calc(var(--media-spacing) * 3);
-        border: 3px solid var(--media-accent);
-        box-shadow: 6px 6px 0 var(--pp-shadow);
+        border: 2px solid var(--media-accent);
+        box-shadow:
+          5px 5px 0 var(--pp-shadow-soft),
+          0 18px 36px var(--pp-ambient);
       }
     }
 
@@ -2258,7 +2334,7 @@
     }
 
     .media-time-slider-track {
-      height: calc(var(--media-spacing) * 3);
+      height: calc(var(--media-spacing) * 2.5);
       border: 2px solid var(--pp-edge);
       background-color: var(--pp-track);
     }
@@ -2267,9 +2343,9 @@
       background-color: var(--pp-track);
     }
 
-    /* The XP bar fattens one step (12px → 16px) while it is hovered or holds
+    /* The XP bar fattens one step (10px → 14px) while it is hovered or holds
        keyboard focus, so it reads as grabbable; the segment cuts stay on the
-       same even 10px pitch at either height, and the thumb keeps its own
+       same even 8px pitch at either height, and the thumb keeps its own
        focus ring and drag growth. */
     .media-time-slider-track {
       transition: height 150ms ease;
@@ -2277,21 +2353,21 @@
 
     @media (hover: hover) {
       .media-time-slider:hover .media-time-slider-track {
-        height: calc(var(--media-spacing) * 4);
+        height: calc(var(--media-spacing) * 3.5);
       }
     }
 
     .media-time-slider:focus-within .media-time-slider-track {
-      height: calc(var(--media-spacing) * 4);
+      height: calc(var(--media-spacing) * 3.5);
     }
 
-    /* Dark 2px gaps every 10px cut the continuous fill into XP blocks. */
+    /* Dark 2px gaps every 8px cut the continuous fill into XP blocks. */
     .media-time-slider-fill {
       background-color: var(--media-accent);
       background-image: repeating-linear-gradient(
         to right,
         rgb(8 8 15 / 0.55) 0 2px,
-        transparent 2px 10px
+        transparent 2px 8px
       );
     }
 
@@ -2301,7 +2377,7 @@
       background-image: repeating-linear-gradient(
         to right,
         rgb(8 8 15 / 0.5) 0 2px,
-        transparent 2px 10px
+        transparent 2px 8px
       );
     }
 
@@ -2310,7 +2386,7 @@
       height: calc(var(--media-spacing) * 4);
       background-color: var(--media-accent);
       border: 2px solid var(--pp-shadow);
-      box-shadow: 2px 2px 0 var(--pp-shadow);
+      box-shadow: 2px 2px 0 var(--pp-shadow-soft);
     }
 
     @scope (.media-time-slider) {
@@ -2329,23 +2405,25 @@
     /* Seek preview becomes a pixel speech box. */
     .media-time-slider-preview-meta {
       background-color: var(--media-popover);
+      background-image: var(--pp-panel-gradient);
       color: var(--media-popover-foreground);
       border: 2px solid var(--pp-edge);
-      box-shadow: 4px 4px 0 var(--pp-shadow);
+      box-shadow: 3px 3px 0 var(--pp-shadow-soft);
       font-weight: 700;
     }
 
     .media-slider-thumbnail {
       border: 2px solid var(--pp-edge);
-      box-shadow: 4px 4px 0 var(--pp-shadow);
+      box-shadow: 3px 3px 0 var(--pp-shadow-soft);
     }
 
     /* ---- Volume: cyan segmented meter in a cabinet popover ----------------- */
 
     .media-volume-popover-popup {
       background-color: var(--media-popover);
+      background-image: var(--pp-panel-gradient);
       border: 2px solid var(--pp-edge);
-      box-shadow: 4px 4px 0 var(--pp-shadow);
+      box-shadow: 3px 3px 0 var(--pp-shadow-soft);
     }
 
     .media-volume-slider-track {
@@ -2401,7 +2479,7 @@
         color: var(--media-accent);
         box-shadow:
           inset 0 -4px 0 var(--media-accent),
-          4px 4px 0 var(--pp-shadow);
+          3px 3px 0 var(--pp-shadow-soft);
       }
     }
 
@@ -2409,8 +2487,11 @@
 
     .media-menu-popup {
       background-color: var(--media-popover);
-      border: 3px solid var(--pp-edge);
-      box-shadow: 6px 6px 0 var(--pp-shadow);
+      background-image: var(--pp-panel-gradient);
+      border: 2px solid var(--pp-edge);
+      box-shadow:
+        5px 5px 0 var(--pp-shadow-soft),
+        0 16px 32px var(--pp-ambient);
     }
 
     .media-menu-item,
@@ -2482,8 +2563,9 @@
 
     .media-tooltip-popup {
       background-color: var(--media-popover);
+      background-image: var(--pp-panel-gradient);
       border: 2px solid var(--pp-edge);
-      box-shadow: 4px 4px 0 var(--pp-shadow);
+      box-shadow: 3px 3px 0 var(--pp-shadow-soft);
       font-weight: 700;
       /* The base chip padding (2px block) sits off the spacing rhythm; bring
          it onto the same 4/8 steps as the menus. */
@@ -2500,8 +2582,9 @@
 
     .media-indicator {
       background-color: var(--media-background);
+      background-image: var(--pp-panel-gradient);
       border: 2px solid var(--pp-edge);
-      box-shadow: 4px 4px 0 var(--pp-shadow);
+      box-shadow: 3px 3px 0 var(--pp-shadow-soft);
       font-weight: 700;
     }
 
@@ -2580,8 +2663,11 @@
     }
 
     .media-dialog-popup {
-      border: 3px solid var(--pp-magenta);
-      box-shadow: 8px 8px 0 var(--pp-shadow);
+      background-image: var(--pp-panel-gradient);
+      border: 2px solid var(--pp-magenta);
+      box-shadow:
+        6px 6px 0 var(--pp-shadow-soft),
+        0 24px 48px var(--pp-ambient);
     }
 
     .media-dialog-title {
@@ -2690,6 +2776,15 @@
 
       .media-dialog-popup,
       .video-controls-center-play {
+        box-shadow: none;
+      }
+
+      .media-button,
+      .video-controls-center-button,
+      .media-menu-popup,
+      .media-title,
+      .media-tooltip-popup,
+      .media-indicator {
         box-shadow: none;
       }
 
