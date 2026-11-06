@@ -1,0 +1,6 @@
+/* Global styles for the skin, loaded only in the preview. */
+
+/* Pixel Play type: "Press Start 2P" for display moments (PRESS START, title,
+   menu headings), "Space Mono" for UI text and the time display. Both stacks
+   fall back to monospace so the layout holds if the webfonts fail. */
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap");
